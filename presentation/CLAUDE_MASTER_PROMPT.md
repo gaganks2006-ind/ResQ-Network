@@ -243,3 +243,41 @@ Design a 4-quadrant / 4-card technology roadmap graphic with futuristic technica
 ### 🔴 3. On Zero-Signal Highway Dead Zones:
 "We never rely solely on telecom towers. ResQ Network integrates the Meshtastic LoRa protocol over license-free 868 MHz radio. Emergency beacons hop peer-to-peer across passing vehicles and NHAI toll nodes over a 15-kilometer mesh radius, while CPR audio guidance and medical protocols run 100% offline via local service worker caching."
 ```
+
+================================================================================
+SLIDE 8: RESEARCH AND REFERENCES (TEMPLATE SLIDE)
+================================================================================
+Header: Research and References
+Subtitle: Grounded in Peer-Reviewed Resuscitation Science, Statutory Good Samaritan Law, and National MoRTH Data
+
+[LAYOUT: 3 HIGHLIGHT CARDS + BOTTOM FORMAL CITATION STRIP]
+
+CARD 1: CLINICAL RESUSCITATION SCIENCE
+* American Heart Association (AHA) & European Resuscitation Council (ERC):
+  - Out-of-Hospital Cardiac Arrest (OHCA): Survival degrades by 7-10% every minute without basic life support.
+  - Bystander CPR within 180s raises survival rates from <5% to 40-50%.
+* 110 BPM Real-Time Audio-Haptic Feedback:
+  - Complies with AHA ECC guidelines (100-120 compressions/min, 5-6 cm depth) to maintain critical coronary perfusion pressure.
+
+CARD 2: STATUTORY LEGAL IMMUNITY (INDIA)
+* Supreme Court of India Mandate (SaveLIFE Foundation v. UOI, 2016):
+  - Prohibits police harassment, compulsory witness statements, and hospital admission deposits for Good Samaritans.
+* Motor Vehicles (Amendment) Act 2019 (Section 134A):
+  - Complete immunity from civil and criminal liability for bystanders assisting accident victims.
+* IT Act 2000 (§ 85B) & DPDP Act 2023 (§ 9):
+  - Hyperledger Fabric rescue certificates admissible under Section 65B as tamper-proof electronic proof.
+  - DPDP Act § 9 emergency health exemption authorizes zero-knowledge medical vault unlocking.
+
+CARD 3: NATIONAL STATISTICAL BENCHMARKS
+* MoRTH Annual Crash Report (2022-2023):
+  - 4,61,312 road accidents, 1,68,491 fatalities (1 death every 3.1 min).
+  - 50% of fatalities clinically preventable with Golden Hour care.
+  - ₹4.5-5.96 Lakh Cr annual economic loss (3.14% of India's GDP, World Bank).
+* Interoperability Standards:
+  - HL7 FHIR Release 4 & Ayushman Bharat Digital Mission (ABDM) M1/M2 health data exchange schemas.
+
+BOTTOM CITATION FOOTER:
+1. MoRTH, 'Road Accidents in India 2022' (2023) | 2. Supreme Court of India, WP(C) 235/2012 (2016) | 3. Panchal et al., AHA CPR Guidelines, Circulation (2020) | 4. Semeraro et al., ERC Guidelines, Resuscitation (2021) | 5. World Bank, 'Traffic Crash Injuries in India' (2021).
+
+SPEAKER NOTES:
+'Judges, our architecture is not speculative; it is grounded in statutory Indian law and clinical medicine. The AHA and ERC prove that without bystander CPR in 3 minutes, brain death starts within 6 minutes. Our 110 BPM metronome enforces clinical guidelines. Legally, Section 134A of the Motor Vehicles Act and the 2016 Supreme Court ruling guarantee Good Samaritan immunity, which our Hyperledger Fabric certificate cryptographically proves under Section 85B of the IT Act. We are solving both the clinical latency gap and the legal fear factor.'
