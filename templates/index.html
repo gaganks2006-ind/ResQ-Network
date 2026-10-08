@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQ Network — AI Emergency Medical Response & Dynamic Triage Grid</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet GIS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    .vault-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .cert-box {
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .badge-blockchain {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--violet);
+      background: rgba(139, 92, 246, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .badge-mesh {
+      color: var(--amber);
+      background: rgba(255, 183, 3, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="brand-section">
+      <div class="brand-logo">🚨</div>
+      <div>
+        <div class="brand-title">ResQ <span>Network</span></div>
+        <div style="font-size: 11px; color: var(--text-muted);">
+          Autonomous Bystander Dispatch · Medical Vault · ResQ Shield Blockchain
+        </div>
+      </div>
+      <span class="badge-tag">Tech-ಶೋಧ 2026 · Health & Wellness</span>
+    </div>
+
+    <!-- Live Metrics Strip -->
+    <div class="header-stats">
+      <div class="stat-pill">
+        <span class="live-indicator"></span>
+        <span>Grid: <b>ACTIVE</b></span>
+      </div>
+      <div class="stat-pill">
+        <span>Emergencies: <b id="stat-total">0</b></span>
+      </div>
+      <div class="stat-pill">
+        <span>Code Red: <b id="stat-critical" style="color:var(--crimson)">0</b></span>
+      </div>
+      <div class="stat-pill">
+        <span>Available ICUs: <b id="stat-beds" style="color:var(--cyan)">70</b></span>
+      </div>
+      <div class="stat-pill">
+        <span>ResQ Shield Certs: <b id="stat-certs" style="color:var(--violet)">0</b></span>
+      </div>
+      <div class="stat-pill">
+        <span>1st Responder ETA: <b style="color:var(--emerald)">2.4 min</b></span>
+      </div>
+      
+      <!-- Link to Mobile Citizen SOS app -->
+      <a href="/sos" target="_blank" style="
+        background: linear-gradient(135deg, var(--crimson), #c41032);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 0 12px rgba(255,51,85,0.4);
+      ">
+        📲 Open Citizen SOS App
+      </a>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Dashboard Container -->
+  <div class="dashboard-container">
+
+    <!-- Column 1: Live Emergency Incidents Queue -->
+    <div class="left-panel glass">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>⚡ Live Incident Queue</span>
+        </div>
+        <span style="font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono);">Real-Time Triage</span>
+      </div>
+
+      <div class="incidents-list" id="incidents-list">
+        <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">
+          Waiting for emergency triggers...<br/>
+          Use the simulation dock below to test.
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2: Center Interactive GIS Map & Simulation Control -->
+    <div class="center-panel glass">
+      <div class="map-controls-overlay">
+        <button class="map-btn active" onclick="map.setView([12.3364, 76.6205], 14)">📍 VVCE Campus</button>
+        <button class="map-btn" onclick="map.setView([12.3250, 76.6450], 13)">🌐 Mysuru City Grid</button>
+      </div>
+
+      <!-- Leaflet Map Container -->
+      <div id="map"></div>
+
+      <!-- Quick Emergency Simulation Dock (Judge Presentation Showcase) -->
+      <div class="simulation-dock glass">
+        <div class="sim-label">
+          <span style="color:var(--crimson);">⚡ SIMULATE FOR JUDGES:</span>
+        </div>
+        <div class="sim-actions">
+          <button class="btn-trigger-sim" onclick="triggerSimulation('CARDIAC_VVCE')">
+            ❤️ VVCE Cardiac Arrest (Code Red)
+          </button>
+          <button class="btn-trigger-sim" style="border-color:var(--cyan); background:rgba(62,230,242,0.15);" onclick="triggerSimulation('KANNADA_VOICE')">
+            🗣️ Kannada Voice SOS ("ಎದೆ ನೋವು")
+          </button>
+          <button class="btn-trigger-sim" style="border-color:var(--violet); background:rgba(139,92,246,0.15);" onclick="triggerSimulation('TRAUMA_RING_ROAD')">
+            🚗 Ring Road Polytrauma
+          </button>
+          <button class="btn-trigger-sim" style="border-color:var(--amber); background:rgba(255,183,3,0.15);" onclick="triggerSimulation('MESH_OFFLINE')">
+            📡 Offline Highway Mesh (LoRa)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 3: Medical Vault, Blockchain Shield & Telemetry -->
+    <div class="right-panel">
+      
+      <!-- In-Transit Paramedic Telemetry Card -->
+      <div class="glass vitals-card">
+        <div class="panel-title" style="margin-bottom: 8px;">
+          <span>📡 In-Transit Telemetry (Ambulance IoT)</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted);">Live Paramedic-to-ER Handshake</div>
+
+        <div class="vitals-grid">
+          <div class="vital-box alert">
+            <div class="vital-title">Heart Rate</div>
+            <div class="vital-val" id="vital-hr">--</div>
+            <span class="vital-unit">BPM</span>
+          </div>
+          <div class="vital-box">
+            <div class="vital-title">Blood Oxygen</div>
+            <div class="vital-val" id="vital-spo2" style="color:var(--emerald);">--</div>
+            <span class="vital-unit">% SpO2</span>
+          </div>
+          <div class="vital-box">
+            <div class="vital-title">Blood Pressure</div>
+            <div class="vital-val" id="vital-bp" style="font-size:20px;">--/--</div>
+            <span class="vital-unit">mmHg</span>
+          </div>
+          <div class="vital-box">
+            <div class="vital-title">Trauma Tier</div>
+            <div class="vital-val" style="color:var(--crimson); font-size:18px;">CRITICAL</div>
+            <span class="vital-unit">Code Red</span>
+          </div>
+        </div>
+
+        <div class="ecg-monitor">
+          <span style="font-size: 11px; color: var(--text-secondary);">ECG RHYTHM:</span>
+          <span class="ecg-wave-text" id="ecg-status-text">MONITORING STANDBY</span>
+        </div>
+      </div>
+
+      <!-- Medical Vault Auto-Unlock Card (FR-06, FR-20) -->
+      <div class="glass" style="padding: 16px;">
+        <div class="panel-title" style="margin-bottom: 4px; display:flex; justify-content:space-between;">
+          <span>🔐 Medical Vault (Encrypted Health Data)</span>
+          <span style="font-size:10px; color:var(--emerald);" id="vault-status-badge">AUTO-UNLOCKED</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+          Unlocks blood group & allergies upon verified CRITICAL score
+        </div>
+
+        <div class="vault-box" id="vault-display">
+          <div><b>Patient:</b> Praveen Kumar (Identified via Biometric SOS)</div>
+          <div style="margin-top:4px;"><b>Blood Group:</b> <span style="color:var(--crimson); font-weight:700;">O Positive (O+)</span></div>
+          <div style="margin-top:2px;"><b>Allergies:</b> Penicillin, Sulfa drugs</div>
+          <div style="margin-top:2px;"><b>Chronic:</b> Type-2 Diabetes, Hypertension</div>
+          <div style="margin-top:2px;"><b>Emergency Contact:</b> Deepa (+91 98450 91823)</div>
+        </div>
+      </div>
+
+      <!-- ResQ Shield: Hyperledger Blockchain Certificate Card (FR-11, FR-12) -->
+      <div class="glass" style="padding: 16px;">
+        <div class="panel-title" style="margin-bottom: 4px; display:flex; justify-content:space-between;">
+          <span>🛡️ ResQ Shield (Legal Protection)</span>
+          <span class="badge-blockchain">HYPERLEDGER FABRIC</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+          India Good Samaritan Law (2019) Immutable Action Log
+        </div>
+
+        <div class="cert-box" id="shield-display">
+          <div><b>TxHash:</b> <span id="cert-tx" style="color:var(--cyan)">0x7f8a92...e41b</span></div>
+          <div style="margin-top:4px;"><b>Block:</b> #<span id="cert-block">48912</span> | <b>Status:</b> CONFIRMED</div>
+          <div style="margin-top:4px; font-size:10px; color:#cbd5e1;">
+            Legally protects responder under IT Act § 85B & GSL 2019.
+          </div>
+          <button onclick="downloadCertificate()" style="
+            margin-top:8px; width:100%; background:rgba(139,92,246,0.2); border:1px solid var(--violet);
+            color:#fff; padding:5px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;
+          ">
+            📄 View / Download Legal Certificate
+          </button>
+        </div>
+      </div>
+
+      <!-- Allocated Receiving Hospital Status -->
+      <div class="glass" style="padding: 16px;">
+        <div class="panel-title" style="margin-bottom: 8px;">
+          <span>🏥 Auto-Allocated Receiving Hospital</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">HL7 FHIR R4 Pre-Notification</div>
+        
+        <div id="assigned-hospital-display">
+          <div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 12px 0;">
+            Trigger an emergency to observe automated hospital bed matching.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

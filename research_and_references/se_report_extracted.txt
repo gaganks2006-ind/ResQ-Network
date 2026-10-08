@@ -1,0 +1,1964 @@
+--- PAGE 1 ---
+Page 5 of 44 
+Abstract 
+India records 1.68 lakh road accident deaths annually — one life lost every four minutes — making it the 
+country with the highest road fatality rate globally. Critically, 50% of these deaths are preventable during the 
+'Golden Hour' (the first 60 minutes post-trauma), yet average ambulance response times of 35–90 minutes 
+render this window largely unused. Bystanders, already present at accident scenes, hesitate to help due to fear 
+of legal consequences, despite India's Good Samaritan Law (2019) — a law 94% of Indians remain unaware 
+of. 
+ResQ Network is an AI-powered emergency response platform that bridges this gap: automatic crash 
+detection via smartphone sensors, GPS-based dispatch to the nearest trained bystander within seconds, 
+multilingual AI voice guidance for on-scene first aid, and blockchain-based legal protection for responders. 
+Hospitals are pre-notified with victim data before ambulance arrival, saving 10–15 minutes. 
+This report presents the complete Software Engineering documentation — feasibility analysis, requirements 
+engineering (IEEE IEENSVR), system design with all UML and data diagrams, construction and testing 
+strategy, risk analysis, SQA, configuration management, and project metrics — covering the full SDLC for 
+ResQ Network. 
+Keywords: Emergency Response, Golden Hour, AI Dispatch, Good Samaritan Law, Bystander Activation, 
+Blockchain, Mesh Network. 
+ 
+ 
+
+--- PAGE 2 ---
+Page 6 of 44 
+Table of Contents 
+Abstract....................................................................................................................... 5 
+Table of Contents ....................................................................................................... 6 
+List of Abbreviations ............................................................................................... 10 
+List of Figures .......................................................................................................... 12 
+List of Tables ............................................................................................................ 13 
+Chapter 1: Introduction .......................................................................................... 14 
+1.1 Overview of the Project ....................................................................................... 14 
+1.2 Problem Background ........................................................................................... 14 
+1.3 Objectives ............................................................................................................ 14 
+1.4 Scope .................................................................................................................... 14 
+1.5 Report Organisation ............................................................................................. 14 
+Chapter 2: Feasibility Study ................................................................................... 16 
+2.1 Technical Feasibility ............................................................................................ 16 
+2.1.1 Technology Stack Availability ............................................................................................................. 16 
+2.1.2 Technical Challenges and Mitigations ............................................................................................... 16 
+2.2 Operational Feasibility ........................................................................................ 16 
+2.2.1 Non-Functional Requirements Summary .......................................................................................... 16 
+2.3 Economic Feasibility (Cost Estimation) .............................................................. 17 
+2.4 Schedule Feasibility ............................................................................................. 17 
+
+--- PAGE 3 ---
+Page 7 of 44 
+2.4.1 Triple Constraint: Time, Cost, Quality ............................................................................................... 17 
+2.4.2 Implementation Roadmap ................................................................................................................... 18 
+Chapter 3: Software Requirements Specification (SRS) ..................................... 19 
+3.1 Functional Requirements ..................................................................................... 19 
+3.2 Non-Functional Requirements ............................................................................. 20 
+Chapter 4: System Design ....................................................................................... 21 
+4.1 System Architecture ............................................................................................ 21 
+4.2 Entity-Relationship (ER) Diagram ...................................................................... 21 
+4.3 Data Flow Diagrams (DFD) ................................................................................ 22 
+4.3.1 Level 0 — Context Diagram ................................................................................................................ 22 
+4.3.2 Level 1 — Major Processes ................................................................................................................. 23 
+4.4 Use Case Diagram ............................................................................................... 24 
+4.5 Activity Diagram ................................................................................................. 26 
+4.6 State Diagram — Incident Lifecycle ................................................................... 28 
+4.7 Sequence Diagram ............................................................................................... 29 
+4.8 Class Diagram — Key Classes ............................................................................ 29 
+4.9 User Interface Design .......................................................................................... 30 
+Chapter 5: SDLC Process ....................................................................................... 31 
+5.1 Requirement Engineering (IEEE IEENSVR) ...................................................... 31 
+5.2 Design .................................................................................................................. 31 
+5.3 Construction ......................................................................................................... 31 
+
+--- PAGE 4 ---
+Page 8 of 44 
+5.3.1 Technology Stack ................................................................................................................................. 31 
+5.4 Testing ................................................................................................................. 32 
+5.5 Maintenance ......................................................................................................... 33 
+Chapter 6: Risk Analysis ........................................................................................ 34 
+Chapter 7: Software Quality Assurance (SQA) .................................................... 35 
+7.1 Quality Objectives ............................................................................................... 35 
+7.2 SQA Activities ..................................................................................................... 35 
+7.3 Quality Metrics .................................................................................................... 35 
+Chapter 8: Configuration Management ................................................................ 37 
+8.1 Version Control — Git Branching Strategy ........................................................ 37 
+8.2 Release Management ........................................................................................... 37 
+8.3 CI/CD Pipeline..................................................................................................... 37 
+Chapter 9: Project Metrics ..................................................................................... 38 
+9.1 LOC Estimation ................................................................................................... 38 
+9.2 Effort Estimation (COCOMO Basic) .................................................................. 38 
+9.3 Function Point Analysis ....................................................................................... 38 
+Chapter 10: Expected Outcomes and Impact ....................................................... 40 
+10.1 Quantified Projections ....................................................................................... 40 
+10.2 SDG Alignment ................................................................................................. 40 
+Chapter 11: Conclusion ........................................................................................... 41 
+
+--- PAGE 5 ---
+Page 9 of 44 
+Appendix A: Sample SRS Entry (IEEE Std 830-1998) ........................................ 42 
+FR-07: Dispatch Nearest ResQ Responder ................................................................................................. 42 
+Appendix B: Sample Test Cases ............................................................................. 43 
+Appendix C: References .......................................................................................... 44 
+Government and Institutional .................................................................................... 44 
+Academic References ................................................................................................ 44 
+Technical Documentation .......................................................................................... 44 
+ 
+ 
+ 
+
+--- PAGE 6 ---
+Page 10 of 44 
+List of Abbreviations 
+Abbreviation
+Full Form
+AI
+Artificial Intelligence
+API
+Application Programming Interface
+AR
+Augmented Reality
+AES
+Advanced Encryption Standard
+CI/CD
+Continuous Integration / Continuous Deployment
+CPR
+Cardiopulmonary Resuscitation
+DFD
+Data Flow Diagram
+DPDP
+Digital Personal Data Protection Act
+ER
+Entity-Relationship
+ETA
+Estimated Time of Arrival
+FR
+Functional Requirement
+GDP
+Gross Domestic Product
+GPS
+Global Positioning System
+GSL
+Good Samaritan Law
+IEEE
+Institute of Electrical and Electronics Engineers
+IMU
+Inertial Measurement Unit
+LOC
+Lines of Code
+MoRTH
+Ministry of Road Transport and Highways
+NHAI
+National Highways Authority of India
+NFR
+Non-Functional Requirement
+OWASP
+Open Web Application Security Project
+P2P
+Peer-to-Peer
+SDLC
+Software Development Life Cycle
+SLA
+Service Level Agreement
+SQA
+Software Quality Assurance
+SRS
+Software Requirements Specification
+TDD
+Test-Driven Development
+TLS
+Transport Layer Security
+UML
+Unified Modeling Language
+VSL
+Value of Statistical Life
+
+--- PAGE 7 ---
+Page 11 of 44 
+Abbreviation
+Full Form
+WCAG
+Web Content Accessibility Guidelines
+YOLO
+You Only Look Once (object detection)
+ 
+ 
+
+--- PAGE 8 ---
+Page 12 of 44 
+List of Figures 
+Figure No.
+Title
+Chapter
+Figure 1
+System Architecture Diagram
+Chapter 4
+Figure 2
+Entity-Relationship (ER) Diagram
+Chapter 4
+Figure 3
+DFD Level 0 — Context Diagram
+Chapter 4
+Figure 4
+DFD Level 1 — Major Processes
+Chapter 4
+Figure 5
+Use Case Diagram
+Chapter 4
+Figure 6
+Activity Diagram
+Chapter 4
+Figure 7
+State Diagram — Incident Lifecycle
+Chapter 4
+Figure 8
+Sequence Diagram — Accident Response Flow
+Chapter 4
+ 
+ 
+
+--- PAGE 9 ---
+Page 13 of 44 
+List of Tables 
+Table No.
+Title
+Chapter
+Table 1
+Technology Availability Assessment
+Chapter 2
+Table 2
+Technical Challenges and Mitigations
+Chapter 2
+Table 3
+Non-Functional Requirements
+Chapter 2
+Table 4
+Development Cost Estimation
+Chapter 2
+Table 5
+Funding and Revenue Model
+Chapter 2
+Table 6
+Triple Constraint Analysis
+Chapter 2
+Table 7
+Implementation Roadmap
+Chapter 2
+Table 8
+Functional Requirements (SRS)
+Chapter 3
+Table 9
+Non-Functional Requirements (SRS)
+Chapter 3
+Table 10
+ER Entity Definitions
+Chapter 4
+Table 11
+ER Key Relationships
+Chapter 4
+Table 12
+DFD Level 1 — Processes
+Chapter 4
+Table 13
+DFD Level 1 — Data Stores
+Chapter 4
+Table 14
+Use Case Catalogue
+Chapter 4
+Table 15
+State Diagram Descriptions
+Chapter 4
+Table 16
+Class Diagram — Key Classes
+Chapter 4
+Table 17
+User Interface Design
+Chapter 4
+Table 18
+Technology Stack
+Chapter 5
+Table 19
+Testing Strategy
+Chapter 5
+Table 20
+Maintenance Types
+Chapter 5
+Table 21
+Risk Register
+Chapter 6
+Table 22
+SQA Activities
+Chapter 7
+Table 23
+Quality Metrics
+Chapter 7
+Table 24
+Git Branching Strategy
+Chapter 8
+Table 25
+LOC Estimation
+Chapter 9
+Table 26
+Function Point Analysis
+Chapter 9
+Table 27
+Impact Projections
+Chapter 10
+Table 28
+SDG Alignment
+Chapter 10
+ 
+ 
+
+--- PAGE 10 ---
+Page 14 of 44 
+Chapter 1: Introduction 
+1.1 Overview of the Project 
+ResQ Network is an AI-powered emergency response platform designed to address India's road accident 
+fatality crisis. India records approximately 1.68 lakh road accident deaths every year (MoRTH 2022), the 
+highest road fatality rate globally — one death every four minutes. 
+The core insight: a trained bystander already at the accident scene can provide life-saving first aid far faster 
+than any ambulance. ResQ Network harnesses this potential by combining AI, GPS dispatch, multilingual 
+voice guidance, and legal protection to create the world's first proactive bystander-first emergency response 
+system for India. 
+1.2 Problem Background 
+• 
+Bystander Hesitation: 78% want to help but fear legal trouble; 94% unaware of Good Samaritan 
+Law (2019). 
+• 
+Slow Ambulance Response: 35–90 minute average ETA. Golden Hour (first 60 minutes) is 
+routinely lost. 
+• 
+Result: 71% of accident victims die before reaching hospital — all preventable deaths. 
+1.3 Objectives 
+1. Detect accidents automatically via smartphone/wearable sensors. 
+2. Dispatch the nearest trained ResQ Responder within seconds via GPS-based AI dispatch. 
+3. Guide the responder on-scene in their local language via AI voice + AR. 
+4. Pre-notify the hospital with victim data before ambulance arrival. 
+5. Provide blockchain-based legal protection to every responder. 
+1.4 Scope 
+• 
+Flutter mobile app (victim + responder + hospital + admin modes). 
+• 
+AI backend for crash detection, scene assessment, dispatch, and hotspot prediction. 
+• 
+P2P mesh network for zero-signal highway operation. 
+• 
+Integration with 112 India emergency services and hospital systems (HL7 FHIR). 
+• 
+Blockchain layer (Hyperledger Fabric) for tamper-proof action logs. 
+1.5 Report Organisation 
+Chapter
+Title
+1
+Introduction
+2
+Feasibility Study
+3
+Software Requirements Specification
+4
+System Design (with all diagrams)
+5
+SDLC Process
+
+--- PAGE 11 ---
+Page 15 of 44 
+Chapter
+Title
+6
+Risk Analysis
+7
+Software Quality Assurance
+8
+Configuration Management
+9
+Project Metrics
+10
+Expected Outcomes and Impact
+11
+Conclusion
+Appendices 
+A–C
+SRS Sample, Test Cases, References
+ 
+ 
+
+--- PAGE 12 ---
+Page 16 of 44 
+Chapter 2: Feasibility Study 
+2.1 Technical Feasibility 
+2.1.1 Technology Stack Availability 
+Component
+Technology
+Maturity
+Mobile App
+Flutter (Google)
+Production-ready
+Backend
+Firebase Cloud Functions
+Production-ready
+AI Scene Analysis
+YOLOv8 + TensorFlow Lite
+Production-ready
+Voice AI
+Google Speech API
+Production-ready
+Blockchain
+Hyperledger Fabric
+Enterprise-grade
+SMS / Call Fallback
+Twilio
+Production-ready
+Mesh Network
+Meshtastic Protocol (LoRa)
+Active open-source
+AR Training
+ARCore / ARKit
+Production-ready
+Analytics
+Google BigQuery
+Production-ready
+Hospital Integration
+HL7 FHIR R4
+International standard
+ 
+2.1.2 Technical Challenges and Mitigations 
+Challenge
+Mitigation
+Zero-signal highway areas
+Meshtastic P2P mesh network deployed at NHAI rest stops
+AI crash detection false positives
+Adaptive threshold + user confirmation; < 5% target false 
+positive rate
+Wearable sensor diversity
+Phase 1: smartphone IMU only; Phase 2: wearable SDK 
+integration
+Hospital API heterogeneity
+HL7 FHIR R4 standard adopted for all hospital integrations
+Blockchain latency under high load
+Hyperledger Fabric horizontal scaling; async logging
+ 
+2.2 Operational Feasibility 
+2.2.1 Non-Functional Requirements Summary 
+Category
+Requirement
+Target
+Performance
+Dispatch alert delivery
+< 5 seconds
+Availability
+System uptime
+≥ 99.9%
+Scalability
+Concurrent emergencies
+10,000+
+
+--- PAGE 13 ---
+Page 17 of 44 
+Category
+Requirement
+Target
+Reliability
+False positive crash rate
+< 5%
+Security
+Data encryption
+AES-256 + TLS 1.3
+Usability
+Responder onboarding time
+< 10 minutes
+Localization
+Voice guidance languages
+10+ Indian languages
+Portability
+Platform support
+Android 8.0+ / iOS 13+
+ 
+2.3 Economic Feasibility (Cost Estimation) 
+Cost Category
+Estimated Cost (INR)
+Notes
+Mobile App Development (Flutter)
+₹8 – 12 Lakh
+2 developers × 6 months
+AI / ML Model Development
+₹5 – 8 Lakh
+YOLOv8 training + TFLite 
+optimization
+Backend & Cloud (Firebase + GCP)
+₹3 – 5 Lakh / yr
+Usage-based cloud billing
+Blockchain Setup (Hyperledger)
+₹4 – 6 Lakh
+Node setup + SDK integration
+AR Training Module
+₹3 – 5 Lakh
+ARCore / ARKit content
+API Integrations (Twilio, Google)
+₹1 – 2 Lakh / yr
+Usage-based
+Testing & QA
+₹2 – 3 Lakh
+Manual + automated
+Legal & Compliance
+₹1 – 2 Lakh
+DPDP + IT Act advisory
+Team & Operations (Year 1)
+₹10 – 15 Lakh
+Salaries, office, misc
+Total (Pilot Phase)
+₹40 – 60 Lakh
+5-city pilot Year 1
+ 
+Phase
+Investment
+Revenue / Funding Source
+Pilot — Year 1
+₹40 – 60 Lakh
+CSR Grants + Angel Investors
+Scale — Year 2 (5 Cities)
+₹1.5 – 2 Crore
+MoRTH Contract + Insurance Partners
+National — Year 3 (25 Cities)
+₹5 – 8 Crore
+Series A + Government Licensing
+International — Year 3+
+₹15 – 20 Crore
+Global licensing + WHO partnerships
+ 
+2.4 Schedule Feasibility 
+2.4.1 Triple Constraint: Time, Cost, Quality 
+Parameter
+Target
+Strategy
+Time
+MVP in 6 months; full pilot in 12 
+months
+Agile 2-week sprints; incremental feature delivery
+
+--- PAGE 14 ---
+Page 18 of 44 
+Parameter
+Target
+Strategy
+Cost
+Within ₹40–60 Lakh for pilot
+Open-source tools; cloud-native; lean 6-person 
+team
+Quality
+< 5% false positives; > 99.9% 
+uptime
+TDD; staged rollout; continuous monitoring
+ 
+2.4.2 Implementation Roadmap 
+Phase
+Period
+Key Deliverables
+Q1–Q2 Pilot (Bangalore)
+Months 1–6
+Core App, ResQ Voice, ResQ Connect, 112 Integration
+Q3–Q4 AI & Legal Layer (5 
+Cities)
+Months 7–12
+ResQ Vision, ResQ Shield, ResQ Learn, 50K 
+Responders
+Year 2 National Scale (25 
+Cities)
+Months 13–24
+ResQ Pulse, ResQ Grid, ResQ Predict, Government 
+MoU
+Year 3+ International
+Months 25–36+
+Indonesia, Bangladesh, Nigeria, Global ResQ Standard
+ 
+ 
+
+--- PAGE 15 ---
+Page 19 of 44 
+Chapter 3: Software Requirements Specification (SRS) 
+3.1 Functional Requirements 
+FR ID
+Requirement
+Priority
+Source
+FR-01
+Auto crash detection via smartphone 
+accelerometer/gyroscope threshold breach
+Critical
+Victims
+FR-02
+Manual one-tap SOS trigger by bystander
+Critical
+Bystanders
+FR-03
+SOS relay via P2P mesh network when cellular 
+signal absent
+High
+Highways
+FR-04
+GPS coordinates transmitted within 2 seconds of 
+crash detection
+Critical
+Dispatch Engine
+FR-05
+AI scene photo analysis returns severity score 
+within 3 seconds
+Critical
+Dispatch Engine
+FR-06
+Medical vault auto-unlocks on CRITICAL 
+severity score
+Critical
+Hospital / Responder
+FR-07
+Nearest 3 trained ResQ Responders identified 
+and pinged via GPS dispatch
+Critical
+Responder Network
+FR-08
+AI voice guidance delivered in responder's 
+registered local language
+Critical
+Bystanders
+FR-09
+Step-by-step AR first-aid overlay on responder's 
+camera view
+High
+Bystanders
+FR-10
+Ambulance dispatched; hospital pre-notified 
+with victim data
+Critical
+Hospitals
+FR-11
+Every responder action timestamped and logged 
+to Hyperledger Fabric
+Critical
+Legal Protection
+FR-12
+Downloadable blockchain legal certificate 
+generated per assignment
+High
+Responders
+FR-13
+Real-time location and status updates sent to 
+family contacts
+High
+Families
+FR-14
+Gamified AR-based CPR and first-aid training 
+modules
+Medium
+Citizens
+FR-15
+AI-predicted accident hotspots pre-position 
+responders
+Medium
+MoRTH / NHAI
+FR-16
+Integration with 112 India via bi-directional API 
+for ambulance dispatch
+Critical
+Emergency Services
+FR-17
+Responder registration, certification, and annual 
+recertification
+High
+Admin
+FR-18
+Admin dashboard with real-time incident 
+monitoring
+High
+Admin
+FR-19
+Auto-escalate to 112 if no responder accepts 
+Critical
+Dispatch Engine
+
+--- PAGE 16 ---
+Page 20 of 44 
+FR ID
+Requirement
+Priority
+Source
+within 60 seconds
+FR-20
+Victim medical vault registration (blood group, 
+allergies, medications, contacts)
+High
+Victims
+ 
+3.2 Non-Functional Requirements 
+NFR ID
+Category
+Requirement
+Target
+NFR-01
+Performance
+Dispatch alert delivery
+< 5 seconds from crash 
+detection
+NFR-02
+Performance
+AI severity scoring per photo
+< 3 seconds
+NFR-03
+Availability
+System uptime
+≥ 99.9% (24 × 7)
+NFR-04
+Scalability
+Concurrent active emergencies
+≥ 10,000
+NFR-05
+Reliability
+Crash detection false positive rate
+< 5%
+NFR-06
+Security
+Data at rest
+AES-256 encryption
+NFR-07
+Security
+Data in transit
+TLS 1.3
+NFR-08
+Usability
+New responder onboarding
+< 10 minutes
+NFR-09
+Localization
+Voice guidance languages
+≥ 10 Indian languages
+NFR-10
+Portability
+Platform support
+Android 8.0+ and iOS 13+
+NFR-11
+Privacy
+Compliance
+Indian IT Act 2000 + DPDP 
+Act 2023
+NFR-12
+Maintainability
+P1 bug resolution SLA
+< 24 hours
+NFR-13
+Testability
+Unit test coverage (critical paths)
+≥ 90%
+ 
+ 
+
+--- PAGE 17 ---
+Page 21 of 44 
+Chapter 4: System Design 
+This chapter presents the complete visual system design of ResQ Network using standard software 
+engineering diagrams. All diagrams follow UML 2.5 and DFD notation conventions. 
+ 
+4.1 System Architecture 
+ResQ Network is built on a four-layer architecture: Presentation (Flutter mobile + web), Application (Firebase 
+Cloud Functions + AI Engine), Data (Firestore + Hyperledger Fabric), and Edge (Meshtastic mesh network 
+for offline operation). 
+ 
+ 
+Figure 1: ResQ Network — System Architecture Diagram 
+ 
+4.2 Entity-Relationship (ER) Diagram 
+The ER diagram defines the 11 core data entities in the ResQ Network system, their attributes, and the 
+relationships between them. Primary keys are shown in red; foreign keys in grey. Relationships are labelled 
+with cardinality (1:1, 1:N, M:N). 
+ 
+
+--- PAGE 18 ---
+Page 22 of 44 
+ 
+Figure 2: ResQ Network — Entity Relationship (ER) Diagram 
+ 
+Key Relationships: 
+• 
+USER ─── 1:1 ─── MEDICAL_VAULT: Each registered user has exactly one medical vault. 
+• 
+USER ─── 1:N ─── INCIDENT: A victim user can be involved in multiple incidents over time. 
+• 
+INCIDENT ─── M:N ─── RESPONDER via ASSIGNMENT: Multiple responders can be 
+dispatched to one incident. 
+• 
+ASSIGNMENT ─── 1:N ─── ACTION_LOG: Every action taken during an assignment is 
+logged individually. 
+• 
+ASSIGNMENT ─── 1:1 ─── CERTIFICATE: One legal certificate is issued per completed 
+assignment. 
+• 
+HOSPITAL ─── 1:N ─── AMBULANCE: Each hospital manages multiple ambulances. 
+ 
+4.3 Data Flow Diagrams (DFD) 
+4.3.1 Level 0 — Context Diagram 
+The context diagram shows the entire ResQ Network system as a single process, with all external entities and 
+the high-level data flows between them. 
+
+--- PAGE 19 ---
+Page 23 of 44 
+ 
+ 
+Figure 3: ResQ Network — DFD Level 0 (Context Diagram) 
+ 
+4.3.2 Level 1 — Major Processes 
+Level 1 DFD decomposes the system into six primary processing subsystems (P1–P6) and eight data stores 
+(D1–D8), showing all data flows between them. 
+ 
+
+--- PAGE 20 ---
+Page 24 of 44 
+ 
+Figure 4: ResQ Network — DFD Level 1 (Major Processes and Data Stores) 
+ 
+Data Store
+Name
+Contents
+D1
+Incident Store (Firestore)
+All incident records, status, GPS, photos, severity scores
+D2
+Medical Vault (Firestore — 
+encrypted)
+Blood group, allergies, medications, emergency contacts
+D3
+Responder Profiles (Firestore)
+Location, certification level, availability status
+D4
+Action Log (Hyperledger 
+Fabric)
+Tamper-proof timestamped responder action records
+D5
+Hospital Directory (Firestore)
+Hospital contact, GPS, API endpoint, trauma team capacity
+D6
+User Contacts (Firestore)
+Registered emergency family contacts per user
+D7
+Certificate Store
+Generated legal certificates with blockchain references
+D8
+Hotspot Store (BigQuery)
+Computed accident hotspot polygons with risk scores
+ 
+4.4 Use Case Diagram 
+The use case diagram models the interactions between five actor types and the fifteen major use cases of the 
+
+--- PAGE 21 ---
+Page 25 of 44 
+ResQ Network system. «include» relationships show mandatory sub-functions; «extend» relationships show 
+optional extensions. 
+ 
+ 
+Figure 5: ResQ Network — Use Case Diagram 
+ 
+Use Case 
+ID
+Use Case Name 
+Primary Actor 
+Relationship 
+UC-01
+Detect Crash (Auto / Manual 
+SOS)
+Victim / Sensor
+Includes UC-02
+UC-02
+Assess Scene Severity (AI 
+Vision)
+System
+Includes UC-03; Extends UC-05
+UC-03
+Dispatch Nearest Responder
+System Dispatch 
+Engine
+Includes UC-04
+UC-04
+Guide Responder via Voice AI
+ResQ Responder
+Extends UC-08, UC-09
+UC-05
+Unlock Medical Vault
+System (Auto)
+Extends UC-02
+UC-06
+Notify Hospital in Advance
+System
+Includes UC-07
+UC-07
+Track Ambulance in Real-Time
+Ambulance Crew
+—
+
+--- PAGE 22 ---
+Page 26 of 44 
+Use Case 
+ID
+Use Case Name 
+Primary Actor 
+Relationship 
+UC-08
+Generate Blockchain 
+Certificate
+System (Hyperledger)
+Extends UC-04 on completion
+UC-09
+AR First Aid Overlay
+ResQ Responder
+Extends UC-04
+UC-10
+Alert Family Members
+System
+Extends UC-01
+UC-11
+Train Responder (AR First 
+Aid)
+Citizen / Responder
+—
+UC-12
+Predict Accident Hotspots
+System AI
+—
+UC-13
+Mesh Relay (Offline Mode)
+System
+Extends UC-01
+UC-14
+Auto-Escalate to 112
+System
+Extends UC-03 on timeout
+UC-15
+Register / Certify Responder
+System Admin
+—
+ 
+4.5 Activity Diagram 
+The activity diagram traces the complete workflow of the primary accident response scenario from crash 
+detection through patient handover, including all decision points and alternate flows. 
+ 
+
+--- PAGE 23 ---
+Page 27 of 44 
+ 
+Figure 6: ResQ Network — Activity Diagram (Primary Accident Response Flow) 
+
+--- PAGE 24 ---
+Page 28 of 44 
+ 
+4.6 State Diagram — Incident Lifecycle 
+The state diagram models all possible states of an Incident object in the ResQ system, with the events that 
+trigger transitions between states. 
+ 
+ 
+Figure 7: ResQ Network — State Diagram (Incident Lifecycle) 
+ 
+State
+Description
+Entry Event
+Exit Event
+IDLE
+System monitoring; no 
+active incident
+System startup
+Crash / SOS detected
+DETECTED
+Crash confirmed; location 
+captured
+Sensor / SOS trigger
+Scene photo captured
+ASSESSING
+AI scoring in progress; 
+medical vault queried
+Photo uploaded
+Severity score returned
+DISPATCHING
+Responders being alerted
+Severity score 
+computed
+Responder accepts OR 60s 
+timeout
+ESCALATED
+Auto-escalated to 112 India
+60s timeout
+Ambulance confirmed
+RESPONDING
+Responder on scene; 
+guidance active
+Responder GPS = scene 
+GPS
+Ambulance arrives
+
+--- PAGE 25 ---
+Page 29 of 44 
+State
+Description
+Entry Event
+Exit Event
+TRANSFERRING
+Patient handover to 
+ambulance
+Ambulance arrival 
+confirmed
+Hospital receipt confirmed
+CLOSED
+Incident complete; certificate 
+issued
+Hospital confirms 
+receipt
+—
+CANCELLED
+False positive or victim 
+declines
+Manual cancel / AI 
+override
+—
+ 
+4.7 Sequence Diagram 
+The sequence diagram shows the time-ordered message flow between the seven principal system components 
+for the primary accident response scenario. 
+ 
+ 
+Figure 8: ResQ Network — Sequence Diagram (Accident Response Flow) 
+ 
+4.8 Class Diagram — Key Classes 
+
+--- PAGE 26 ---
+Page 30 of 44 
+Class
+Key Attributes
+Key Methods
+Associates With
+IncidentManager
+incidentId, status, gps, severity
+detectCrash(), 
+assessScene(), 
+closeIncident()
+AIEngine, DispatchEngine, 
+BlockchainLogger 
+AIEngine
+modelVersion, threshold
+analyzePhoto(): 
+SeverityScore, 
+detectCrash(): boolean
+Called by IncidentManager
+DispatchEngine
+searchRadius, maxResponders
+findNearestResponders(), 
+pingResponder()
+ResponderProfile, 
+GpsService
+ResponderProfile
+location, certLevel, status
+updateLocation(), 
+acceptIncident()
+User, Assignment
+VoiceGuidanceService
+language, severity
+streamGuidance(): 
+AudioStream
+GoogleSpeechAPI
+BlockchainLogger
+fabricEndpoint
+logAction(): TxHash, 
+generateCertificate()
+Hyperledger Fabric
+MedicalVault
+bloodGroup, allergies
+unlock(incidentId), 
+getEmergencyContact()
+User, IncidentManager
+MeshRelay
+deviceId, peers
+relay(SosPacket), 
+broadcast(Alert)
+NetworkService
+HospitalNotifier
+hospitalId, apiEndpoint
+preAlert(), updateStatus()
+IncidentManager
+HotspotPredictor
+model, dataSource
+computeHotspots(), 
+getHighRiskZones()
+BigQueryService
+ 
+4.9 User Interface Design 
+Screen
+User
+Key UI Elements
+Design Principle
+Home (Victim Mode)
+Any user
+Large SOS button, status 
+indicator, hospital locator 
+One-tap emergency; 
+WCAG 2.1 AA; high 
+contrast
+Responder Alert
+ResQ Responder
+Incident map, victim card, 
+Accept/Decline, ETA 
+Urgent visual + haptic 
+feedback; < 3 taps to 
+accept
+On-Scene Guidance
+ResQ Responder
+AI voice overlay, AR camera, 
+action checklist
+Hands-free capable; 
+voice-first; large text
+Hospital Dashboard
+Hospital Staff
+Incoming patient cards, blood 
+type badge, ETA countdown
+Real-time auto-refresh; 
+colour-coded severity
+Admin Portal
+System Admin
+Incident heatmap, responder 
+network, KPIs
+Data-dense; desktop-
+optimised; filter + export
+Training Module
+Citizen / 
+Responder
+AR CPR dummy, progress bar, 
+badge collection
+Gamified; rewarding; 
+offline-capable
+ 
+ 
+
+--- PAGE 27 ---
+Page 31 of 44 
+Chapter 5: SDLC Process 
+ResQ Network follows a Hybrid Agile-Waterfall SDLC — phased milestones with iterative 2-week sprints 
+within each phase — appropriate for a safety-critical healthcare application. 
+ 
+5.1 Requirement Engineering (IEEE IEENSVR) 
+Step
+Activity
+Application in ResQ Network
+I — Inception
+Identify stakeholders
+Victims, bystanders, hospitals, MoRTH, NHAI, insurance, 
+NGOs, legal advisors
+E — 
+Elicitation
+Gather requirements via 
+surveys & interviews
+Survey of 500+ bystanders; interviews with paramedics; 
+observation of 112 India call center
+E — 
+Elaboration
+Refine requirements
+Use case modeling, scenario walkthroughs, low-fi prototyping
+N — 
+Negotiation
+Resolve stakeholder 
+conflicts
+Hospital pre-notification scope; legal protection boundaries 
+defined with legal advisors
+S — 
+Specification
+Document SRS
+SRS (Chapter 3): 20 FRs, 13 NFRs, 15 use cases
+V — 
+Validation
+Verify completeness and 
+feasibility
+SRS reviewed by paramedics, legal counsel, AI engineers; 
+scenarios traced to use cases
+R — Risk 
+Management
+Identify and mitigate RE 
+risks
+Key risks: hospital API standards, GSL state variations, rural 
+smartphone penetration
+ 
+5.2 Design 
+Design decisions documented in Chapter 4. Key architectural decisions: 
+• 
+Flutter for cross-platform reach with a single codebase. 
+• 
+Firebase for real-time low-latency dispatch (sub-second pub/sub). 
+• 
+Hyperledger Fabric (permissioned) over Ethereum (public) for legal-grade logging. 
+• 
+Meshtastic LoRa protocol for highway mesh — proven in disaster relief contexts. 
+• 
+HL7 FHIR R4 standard for all hospital API integrations. 
+ 
+5.3 Construction 
+5.3.1 Technology Stack 
+Layer
+Technology
+Purpose
+Frontend
+Flutter (Dart)
+Cross-platform mobile app (Android + iOS)
+State Management
+Riverpod / BLoC
+Reactive UI state management
+Backend
+Firebase Cloud Functions 
+Serverless API endpoints
+
+--- PAGE 28 ---
+Page 32 of 44 
+Layer
+Technology
+Purpose
+(Node.js)
+Real-time DB
+Firebase Realtime Database
+Low-latency dispatch and tracking
+Document DB
+Firebase Firestore
+User data, incidents, medical vaults
+AI / ML
+YOLOv8 + TensorFlow Lite
+Scene analysis and crash detection
+Voice AI
+Google Speech-to-Text + TTS
+Multilingual guidance
+Blockchain
+Hyperledger Fabric
+Tamper-proof legal action logging
+SMS / Calls
+Twilio
+Fallback notifications
+Mesh Network
+Meshtastic Protocol (LoRa)
+Zero-signal emergency relay
+AR Module
+ARCore (Android) / ARKit (iOS)
+First aid training
+Analytics
+Google BigQuery + Looker 
+Studio
+Hotspot prediction and reporting
+ 
+5.4 Testing 
+Test Type
+Scope
+Tools
+Pass Criteria
+Unit Testing
+Individual functions / 
+classes
+Flutter test; Jest
+≥ 90% critical path coverage
+Integration Testing
+API interactions 
+between services
+Postman; Firebase 
+Emulator
+All API contracts satisfied
+System Testing
+End-to-end accident 
+response
+Staged simulation tests
+Full scenario < 8 min
+Performance Testing
+Dispatch latency under 
+load
+JMeter; Firebase 
+Performance
+Alert < 5 sec at 10K 
+concurrent users
+Security Testing
+Encryption; auth bypass
+OWASP ZAP; manual 
+pen test
+No critical vulnerabilities
+Usability Testing
+Navigation; voice 
+clarity
+50+ user participants
+≥ 85% task success rate
+Regression Testing
+Existing features post-
+update
+GitHub Actions CI/CD
+Zero regression failures
+Field Testing
+Real-world simulation 
+(Bangalore)
+Controlled mock 
+scenarios
+System behaves as designed
+Localization Testing
+Voice accuracy (10+ 
+languages)
+Native speaker 
+validation
+< 5% error rate per language
+Blockchain Testing
+Certificate generation & 
+tamper-resistance
+Hyperledger test 
+network
+Certs verifiable on ledger
+ 
+
+--- PAGE 29 ---
+Page 33 of 44 
+5.5 Maintenance 
+Type
+Description
+ResQ Examples
+Corrective
+Fix post-deployment bugs
+False positive fixes; dispatch patches; blockchain 
+sync errors
+Adaptive
+Accommodate environment 
+changes
+New OS versions; 112 API changes; HL7 FHIR 
+updates
+Perfective
+Enhance based on user 
+feedback
+New languages; improved AI; UI improvements
+Preventive
+Reduce future failures
+Code refactoring; security audits; DB optimization
+ 
+ 
+
+--- PAGE 30 ---
+Page 34 of 44 
+Chapter 6: Risk Analysis 
+Risks rated by Probability (1–5) and Impact (1–5). Risk Score = P × I. Scores ≥ 12 are High priority. 
+ 
+Risk 
+ID
+Description 
+Prob. 
+Impact 
+Score 
+Mitigation 
+R-01
+High crash detection false positive 
+rate causes alert fatigue
+3
+4
+12
+Adaptive threshold; user confirmation; ML 
+on false positive feedback
+R-02
+Hospital API integration delays 
+(non-standard systems)
+4
+4
+16
+HL7 FHIR standard; hospital-side SDK; 
+dedicated integration support
+R-03
+Insufficient responder network in 
+pilot cities
+3
+5
+15
+NSS/NCC/corporate partnerships; NGO 
+collaborations; incentive programs
+R-04
+Government regulatory delays for 
+112 India API access
+3
+5
+15
+Early MoU negotiations; Twilio fallback; 
+engage MoRTH as advisor
+R-05
+Blockchain latency spikes at high 
+incident volumes
+2
+3
+6
+Horizontal scaling; async logging with 
+eventual consistency
+R-06
+Medical vault data breach
+2
+5
+10
+AES-256; DPDP compliance audit; annual 
+pen testing; zero-trust arch
+R-07
+Rural / highway areas with zero 
+smartphone coverage
+4
+4
+16
+Meshtastic mesh at NHAI rest stops; 
+NHAI partnership
+R-08
+User adoption slower than projected
+3
+4
+12
+Gamified onboarding; community health 
+worker partnerships
+R-09
+Key team member attrition
+2
+4
+8
+Knowledge documentation; pair 
+programming; competitive retention
+R-10
+AI model bias (night / rain 
+conditions)
+3
+4
+12
+Diverse training data; night/rain 
+augmentation; continuous retraining
+R-11
+Funding gap between pilot and scale 
+phases
+2
+5
+10
+Multi-stream funding; insurance MoU; 
+premium hospital API tier
+R-12
+Legal challenge to blockchain cert 
+admissibility
+2
+4
+8
+Legal experts pre-launch; align with IT 
+Act 2000 Section 85B
+ 
+ 
+
+--- PAGE 31 ---
+Page 35 of 44 
+Chapter 7: Software Quality Assurance (SQA) 
+7.1 Quality Objectives 
+• 
+Zero critical defects in dispatch and medical vault subsystems at launch. 
+• 
+≥ 90% unit test coverage on all safety-critical code paths. 
+• 
+All NFRs verified through formal acceptance testing before each phase launch. 
+• 
+OWASP Top 10 vulnerabilities addressed before production deployment. 
+• 
+WCAG 2.1 AA accessibility compliance verified by external audit. 
+ 
+7.2 SQA Activities 
+Activity
+Frequency
+Responsible
+Output
+Requirements Review
+Once per phase
+Tech Lead + Domain 
+Expert
+Reviewed and signed-off SRS
+Design Walkthrough
+Once per phase
+Full Team
+Design review report
+Code Review
+Every pull 
+request
+2 peer reviewers
+Approved / rejected PR with 
+comments
+Static Code Analysis
+Every CI build
+GitHub Actions (Dart 
+Analyze, ESLint)
+Analysis report; blocking on 
+critical issues
+Unit Test Execution
+Every CI build
+Automated
+Test coverage report
+Integration Test Execution
+Every staging 
+deployment
+Automated (Postman / 
+Firebase Emulator)
+Integration test report
+Security Audit
+Quarterly
+External pen tester + 
+OWASP ZAP
+Vulnerability report + 
+remediation tracker
+Performance Baseline
+Before each 
+phase launch
+JMeter + Firebase 
+Performance
+Performance benchmark 
+report
+Usability Testing
+End of each 
+phase
+UX Researcher + 50 
+participants
+Usability report + priority 
+issues list
+Accessibility Audit
+Before public 
+release
+External WCAG auditor
+Accessibility compliance 
+certificate
+ 
+7.3 Quality Metrics 
+Metric
+Definition
+Target
+Defect Density
+Defects per 1,000 LOC
+< 2 per KLOC at launch
+Test Coverage
+% of code covered by unit tests
+≥ 90% (critical paths); ≥ 70% overall
+P1 Resolution Time
+Time from defect report to verified 
+fix
+< 24 hours
+Mean Time Between Failures
+Average time between system 
+failures
+> 720 hours (30 days)
+
+--- PAGE 32 ---
+Page 36 of 44 
+Metric
+Definition
+Target
+False Positive Rate
+Crash alerts that are not actual 
+crashes
+< 5%
+Dispatch Latency
+Detection to responder notification
+< 5 seconds (p95)
+User Satisfaction
+Post-interaction NPS survey
+≥ 70 NPS
+Blockchain Certificate Integrity
+Certificates verifiable on ledger
+100%
+ 
+ 
+
+--- PAGE 33 ---
+Page 37 of 44 
+Chapter 8: Configuration Management 
+8.1 Version Control — Git Branching Strategy 
+Branch
+Purpose
+Protection Rules
+main
+Production-ready code
+PR + 2 reviewers + all CI checks pass
+staging
+Pre-production testing
+PR + 1 reviewer + integration tests pass
+develop
+Integration of completed features
+PR + 1 reviewer + unit tests pass
+feature/xxx
+New feature development
+Developer-owned; CI must pass before PR
+hotfix/xxx
+Critical production bug fixes
+PR + Tech Lead approval; expedited review
+ 
+8.2 Release Management 
+Release Type
+Frequency
+Versioning
+Process
+Major Release
+Every 6 months (per 
+roadmap phase)
+v1.0, v2.0, v3.0
+Full regression + UAT + staged 
+rollout (5%→25%→100%)
+Minor Release
+Bi-monthly sprint 
+completion
+v1.1, v1.2 …
+Integration tests + staging 
+validation + 24hr soak
+Patch / Hotfix
+On-demand for P0 / P1 
+issues
+v1.1.1, v1.1.2 …
+Expedited review + targeted 
+regression + immediate deploy
+AI Model Update
+Quarterly
+model-v1.0, model-
+v2.0 …
+A/B testing in production; 
+rollback plan mandatory
+ 
+8.3 CI/CD Pipeline 
+6. Developer pushes to feature branch → GitHub Actions triggers. 
+7. Static analysis (Dart Analyze, ESLint) — blocking on errors. 
+8. Unit tests executed — build fails if coverage drops below threshold. 
+9. Docker image built and pushed to Google Artifact Registry. 
+10. Deployed to Firebase staging environment. 
+11. Integration tests run against staging. 
+12. Manual QA sign-off required for staging → main promotion. 
+13. Production deployment via Firebase App Distribution (staged rollout). 
+ 
+ 
+
+--- PAGE 34 ---
+Page 38 of 44 
+Chapter 9: Project Metrics 
+9.1 LOC Estimation 
+Subsystem
+Language
+Estimated LOC
+Complexity
+Flutter Mobile App (Victim + 
+Responder)
+Dart
+12,000 – 15,000
+High
+AI Scene Analysis Module
+Python (YOLOv8 / 
+TFLite)
+3,000 – 5,000
+Very High
+Firebase Cloud Functions (API 
+Backend)
+Node.js / TypeScript
+6,000 – 8,000
+High
+Blockchain Integration 
+(Hyperledger)
+Go / Node.js SDK
+2,000 – 3,000
+High
+Voice Guidance Service
+Node.js
+1,500 – 2,000
+Medium
+AR Training Module
+Dart + ARCore SDK
+3,000 – 4,000
+High
+Mesh Network Relay
+Dart + Meshtastic 
+SDK
+1,500 – 2,000
+Medium
+Hospital Notification Service
+Node.js (HL7 FHIR)
+2,000 – 2,500
+Medium
+Admin Dashboard (Web)
+React + TypeScript
+4,000 – 5,000
+Medium
+Total
+—
+35,000 – 46,500
+—
+ 
+9.2 Effort Estimation (COCOMO Basic) 
+• 
+Estimated LOC: ~40 KLOC (mid-range) 
+• 
+COCOMO Formula (semi-detached): Effort = 3.0 × (KLOC)^1.12 
+• 
+Effort = 3.0 × (40)^1.12 ≈ 189 person-months 
+• 
+Team of 6: Duration ≈ 31.5 months — aligns with 36-month roadmap 
+• 
+Productivity: ≈ 211 LOC / person-month 
+ 
+9.3 Function Point Analysis 
+FP Category
+Count
+Weight
+Weighted FP
+External Inputs (user actions)
+20
+Avg (4)
+80
+External Outputs (alerts, certs, reports)
+15
+High (7)
+105
+External Queries (search, lookup)
+12
+Avg (4)
+48
+Internal Logical Files
+8
+High (15)
+120
+External Interface Files (APIs)
+6
+High (10)
+60
+Total Unadjusted FP
+—
+—
+413
+Complexity Adjustment (safety-critical)
+—
+× 1.15
+—
+
+--- PAGE 35 ---
+Page 39 of 44 
+FP Category
+Count
+Weight
+Weighted FP
+Adjusted Function Points (AFP)
+—
+—
+≈ 475 AFP
+ 
+ 
+
+--- PAGE 36 ---
+Page 40 of 44 
+Chapter 10: Expected Outcomes and Impact 
+10.1 Quantified Projections 
+Metric
+Year 1 (5 Cities)
+Year 3 (National)
+Lives Saved
+8,500+
+30,000+ annually
+Trained ResQ Responders
+50,000
+5,00,000+
+Average Response Time
+35 min → 4 min
+< 3 min (urban)
+Economic Value Created (VSL)
+₹850 Crore
+₹3,000+ Crore
+Hospitals Pre-Notified
+25+
+500+
+Legal Certificates Issued
+8,500+
+30,000+ annually
+ 
+10.2 SDG Alignment 
+SDG
+Goal
+ResQ Network Contribution
+SDG 3
+Good Health and Well-Being
+Saves lives through faster AI-guided emergency response
+SDG 9
+Industry, Innovation and 
+Infrastructure
+Builds India's first AI-guided emergency response 
+infrastructure
+SDG 10
+Reduced Inequalities
+Extends emergency response to all Indians including rural and 
+highway areas
+SDG 11
+Sustainable Cities and 
+Communities
+Builds safer urban road ecosystems
+SDG 17
+Partnerships for the Goals
+Government, private, and civil society partnerships for road 
+safety
+ 
+ 
+
+--- PAGE 37 ---
+Page 41 of 44 
+Chapter 11: Conclusion 
+ResQ Network is a convergence of technology, law, and human empathy — built to solve one of India's most 
+preventable public health crises. This Software Engineering Report has documented every phase of the 
+system's SDLC: feasibility, requirements, design with visual diagrams, construction, testing, risk analysis, 
+SQA, configuration management, and project metrics. 
+The feasibility study confirms the system is technically achievable, operationally viable, economically 
+justified, and schedulable within an 18-month pilot timeline. The requirement engineering process produced 
+20 FRs and 13 NFRs. Eight visual diagrams — architecture, ER, DFD L0 & L1, use case, activity, state, and 
+sequence — provide a complete, implementation-ready design blueprint. 
+India has the law. India has the phones. India has the people. ResQ Network simply connects them — and in 
+doing so, can save 30,000+ lives every year at national scale. 
+ 
+Team EcoLogic  |  Sri Jayachamarajendra College of Engineering, Mysuru  |  IDEARUSH 1.0 
+ 
+ 
+
+--- PAGE 38 ---
+Page 42 of 44 
+Appendix A: Sample SRS Entry (IEEE Std 830-1998) 
+FR-07: Dispatch Nearest ResQ Responder 
+Field
+Detail
+Requirement ID
+FR-07
+Title
+Dispatch Nearest Trained ResQ Responder
+Priority
+Critical
+Source
+Accident Dispatch Engine / Responder Network
+Description
+Upon incident confirmation and AI scene assessment, the system shall identify the 
+nearest 3 ResQ Responders within 2 km (configurable) and dispatch simultaneous 
+push notifications. Each notification contains: incident map, victim severity, 
+estimated time to scene, and visible medical alerts. First responder to accept is 
+assigned; remaining alerts withdrawn.
+Pre-conditions
+Incident created (FR-01); GPS available; ≥ 1 AVAILABLE responder within 
+search radius
+Post-conditions
+Assignment record created; responder status set BUSY; voice guidance stream 
+initiated
+Exception
+No acceptance within 60 sec → FR-19 triggered; radius doubled and retried
+Verification
+Simulation: 10 staged incidents, 50 responders. PASS: dispatch < 5 sec in ≥ 95% of 
+trials
+Dependencies
+FR-01, FR-02, FR-05, NFR-01
+ 
+ 
+
+--- PAGE 39 ---
+Page 43 of 44 
+Appendix B: Sample Test Cases 
+TC ID
+Test Name
+Steps
+Expected Result
+Pass Criteria
+TC-001
+Auto Crash Detection 
+— Positive 
+Simulate > 4G impact 
+for > 200ms via test 
+harness
+SOS triggered; 
+incident record 
+created with GPS
+PASS if incident 
+created within 2 
+sec
+TC-002
+Crash Detection — 
+False Positive
+Simulate 2G bump < 
+50ms (pothole)
+No SOS triggered; 
+normal operation
+PASS if no 
+incident created
+TC-003
+Responder Dispatch 
+Latency 
+Confirm incident; 
+measure time to push 
+notification on 
+responder device
+Notification received 
+within 5 seconds 
+PASS if t ≤ 5000 
+ms at p95 
+TC-004
+Medical Vault Auto-
+Unlock 
+Create CRITICAL 
+incident; check 
+responder view
+Vault data visible 
+(blood group, 
+allergies)
+PASS if vault data 
+rendered on screen 
+TC-005
+Blockchain Certificate 
+Generation 
+Complete assignment; 
+request certificate 
+Certificate generated 
+with valid txHash 
+PASS if txHash 
+resolves on 
+Hyperledger ledger
+TC-006
+Offline Mesh Relay
+No signal; two 
+Meshtastic phones 
+500m apart; trigger 
+SOS
+Incident record 
+created via mesh 
+relay 
+PASS if record 
+created within 30 
+sec 
+TC-007
+Voice Guidance — 
+Hindi 
+Set responder language 
+to Hindi; accept 
+incident
+AI voice provides 
+step-by-step in Hindi 
+PASS if native 
+speaker confirms ≥ 
+95% accuracy
+TC-008
+Hospital Pre-
+Notification 
+Mark ambulance 
+dispatched; check 
+hospital dashboard
+Patient card appears 
+with blood type, 
+ETA, severity
+PASS if card 
+appears within 10 
+sec
+ 
+ 
+
+--- PAGE 40 ---
+Page 44 of 44 
+Appendix C: References 
+Government and Institutional 
+14. Ministry of Road Transport and Highways (MoRTH). (2022). Road Accidents in India 2022. 
+Government of India. 
+15. World Bank. (2023). The High Toll of Traffic Injuries: Unacceptable and Preventable. 
+16. Ministry of Health and Family Welfare. (2019). Good Samaritan Law Guidelines. Government of 
+India. 
+ 
+Academic References 
+17. Pressman, R. S., & Maxim, B. R. (2019). Software Engineering: A Practitioner's Approach (9th 
+ed.). McGraw-Hill. 
+18. Sommerville, I. (2016). Software Engineering (10th ed.). Pearson. 
+19. IEEE Std 830-1998. Recommended Practice for Software Requirements Specifications. 
+20. Boehm, B. W. (1981). Software Engineering Economics. Prentice-Hall. 
+ 
+Technical Documentation 
+21. Google. (2024). Flutter Documentation. https://flutter.dev/docs 
+22. Google. (2024). Firebase Documentation. https://firebase.google.com/docs 
+23. Ultralytics. (2024). YOLOv8 Documentation. https://docs.ultralytics.com 
+24. Hyperledger Foundation. (2024). Hyperledger Fabric Docs. https://hyperledger-
+fabric.readthedocs.io 
+25. Meshtastic Project. (2024). Protocol Documentation. https://meshtastic.org/docs 
+26. HL7 International. (2024). FHIR R4 Specification. https://hl7.org/fhir 
+ 
+— End of Report — 
+ 

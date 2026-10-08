@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ResQ 1-Tap SOS | Emergency Bystander Life-Support</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 20%, #150914, #08060c);
+    }
+    .badge-live-gps {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald);
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+    .quick-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .quick-chip:hover {
+      background: rgba(62, 230, 242, 0.1);
+      border-color: var(--cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sos-container">
+
+    <!-- Top GPS Status Bar -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">🚨</span>
+          <b style="font-size: 16px; letter-spacing: -0.02em;">ResQ <span style="color:var(--cyan)">SOS</span></b>
+        </div>
+        <div class="badge-live-gps">
+          <span class="live-indicator"></span>
+          <span id="gps-status">GPS LOCKED: VVCE MYSURU</span>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-secondary); text-align: center;">
+        Instant life-support, nearest certified doctor dispatch & hospital bed reservation.
+      </p>
+    </div>
+
+    <!-- Active Emergency Screen (Shown after pressing SOS) -->
+    <div id="active-screen" style="display: none; margin-top: 10px;">
+      
+      <div style="background: rgba(255, 51, 85, 0.12); border: 2px solid var(--crimson); border-radius: 12px; padding: 16px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 700; color: var(--crimson); letter-spacing: 0.1em; text-transform: uppercase;">
+          EMERGENCY DISPATCH IN PROGRESS
+        </div>
+        <h2 style="font-size: 24px; margin: 6px 0; color: #fff;" id="resp-triage-title">CODE RED: CARDIAC ALERT</h2>
+        <div style="font-size: 13px; color: #cbd5e1;" id="resp-hospital-name">Allocated: Columbia Asia Hospital Mysuru</div>
+        <div style="font-size: 12px; color: var(--emerald); margin-top: 4px; font-weight: 600;" id="resp-first-responder">
+          🧑‍⚕️ Dr. Sneha Hegde (MD) arriving on foot in ~2.1 mins
+        </div>
+      </div>
+
+      <!-- Live CPR Metronome -->
+      <div class="cpr-metronome-box" id="cpr-box">
+        <div style="font-size: 13px; font-weight: 700; color: #fff;">
+          ❤️ CPR METRONOME (110 BPM)
+        </div>
+        <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+          Push down hard in the center of the chest to the beat below:
+        </p>
+        <div class="cpr-beat pulse" id="cpr-beat-indicator">PUSH</div>
+        <button onclick="toggleMetronomeAudio()" style="
+          background: rgba(255,255,255,0.08); border: 1px solid var(--border); color:#fff;
+          padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-top: 6px;
+        ">
+          🔊 Toggle Audio Beep
+        </button>
+      </div>
+
+      <!-- Step-by-Step Instructions -->
+      <div style="margin-top: 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; padding: 14px;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--cyan); margin-bottom: 6px;">
+          📋 ACTIONABLE BYSTANDER PROTOCOL:
+        </div>
+        <pre id="bystander-instructions" style="
+          font-family: var(--font-sans); font-size: 12px; color: #e2e8f0; white-space: pre-wrap; line-height: 1.5;
+        "></pre>
+      </div>
+
+      <button onclick="resetSOS()" style="
+        width: 100%; margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.06);
+        border: 1px solid var(--border); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+      ">
+        ← Report Another Emergency
+      </button>
+
+    </div>
+
+    <!-- Pre-Trigger Emergency Screen -->
+    <div id="trigger-screen">
+      
+      <!-- Big One-Tap SOS Button -->
+      <div class="sos-hero">
+        <div class="sos-big-btn" id="sos-btn" onclick="triggerSOS()">
+          <span>ONE-TOUCH</span>
+          SOS
+          <span>TAP FOR HELP</span>
+        </div>
+      </div>
+
+      <!-- Quick Symptom Selector -->
+      <div style="margin-top: 16px;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
+          SELECT EMERGENCY TYPE (OR TYPE BELOW):
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+          <div class="quick-chip" onclick="setSymptom('Severe chest pain, sudden collapse, unresponsive')">
+            💔 Heart Attack / Collapse
+          </div>
+          <div class="quick-chip" onclick="setSymptom('ಎದೆಯಲ್ಲಿ ತೀವ್ರ ನೋವು ಮತ್ತು ಉಸಿರಾಟ ನಿಂತಿದೆ')">
+            🗣️ ಕನ್ನಡ: ಎದೆ ನೋವು
+          </div>
+          <div class="quick-chip" onclick="setSymptom('Severe road accident, heavy blood loss, head trauma')">
+            🩸 Severe Bleeding
+          </div>
+          <div class="quick-chip" onclick="setSymptom('Sudden facial droop, slurred speech, arm paralysis')">
+            🧠 Stroke / Fainting
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="symptom-input" placeholder="Type or describe symptoms..." style="
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            padding: 10px 14px; border-radius: 8px; color: #fff; font-size: 13px; outline: none;
+          " value="Severe chest pain, sudden collapse, unresponsive">
+          <button onclick="triggerSOS()" style="
+            background: var(--cyan); color: #000; border: none; padding: 0 16px;
+            border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;
+          ">
+            SEND
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Information -->
+    <div style="text-align: center; margin-top: 20px; font-size: 11px; color: var(--text-muted);">
+      ResQ Network · Tech-ಶೋಧ 2026 · VVCE Mysuru<br/>
+      Emergency Coordination System
+    </div>
+
+  </div>
+
+  <script>
+    let audioMetronome = null;
+    let metronomeInterval = null;
+    let audioEnabled = false;
+
+    function playBeepTone() {
+      if (!audioEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = 800;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+      } catch (e) {}
+    }
+
+    function toggleMetronomeAudio() {
+      audioEnabled = !audioEnabled;
+    }
+
+    function setSymptom(text) {
+      document.getElementById("symptom-input").value = text;
+    }
+
+    async function triggerSOS() {
+      const text = document.getElementById("symptom-input").value || "Severe sudden collapse, urgent medical attention needed";
+      
+      const payload = {
+        caller_name: "Citizen Bystander",
+        caller_phone: "9845012345",
+        latitude: 12.3364,
+        longitude: 76.6205,
+        address: "Near VVCE Main Gate, Gokulam 3rd Stage, Mysuru",
+        symptoms_text: text,
+        language: text.includes("ನೋವು") ? "kn" : "en"
+      };
+
+      try {
+        const res = await fetch("/api/emergency/sos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        // Switch to Active Screen
+        document.getElementById("trigger-screen").style.display = "none";
+        document.getElementById("active-screen").style.display = "block";
+
+        document.getElementById("resp-triage-title").innerText = `${data.incident.triage_level}: ${data.triage_summary.triage_reason}`;
+        document.getElementById("resp-hospital-name").innerText = `Allocated Destination: ${data.incident.assigned_hospital ? data.incident.assigned_hospital.name : 'Emergency Facility'}`;
+        
+        if (data.incident.alerted_responders && data.incident.alerted_responders.length > 0) {
+          const resp = data.incident.alerted_responders[0];
+          document.getElementById("resp-first-responder").innerText = `🧑‍⚕️ ${resp.name} (${resp.qualification}) arriving on foot in ~${Math.round(resp.distance_km * 4 + 1)} mins`;
+        }
+
+        // Show CPR Metronome if CPR is required
+        if (data.triage_summary.cpr_required) {
+          document.getElementById("cpr-box").style.display = "block";
+          if (!metronomeInterval) {
+            metronomeInterval = setInterval(playBeepTone, 545); // ~110 BPM
+          }
+        } else {
+          document.getElementById("cpr-box").style.display = "none";
+        }
+
+        const guidance = (data.incident.symptoms_text.includes("ನೋವು") || data.incident.language === "kn") ? data.guidance_kn : data.guidance_en;
+        document.getElementById("bystander-instructions").innerText = guidance;
+
+      } catch (e) {
+        alert("Failed to connect to ResQ Grid: " + e.message);
+      }
+    }
+
+    function resetSOS() {
+      if (metronomeInterval) {
+        clearInterval(metronomeInterval);
+        metronomeInterval = null;
+      }
+      document.getElementById("active-screen").style.display = "none";
+      document.getElementById("trigger-screen").style.display = "block";
+    }
+  </script>
+</body>
+</html>
