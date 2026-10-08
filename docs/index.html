@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQ Network | AI Emergency Grid & Bystander Dispatch</title>
+  <!-- Google Fonts & Leaflet CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #090B10;
+      --panel-bg: rgba(16, 21, 30, 0.85);
+      --card-bg: rgba(22, 29, 43, 0.9);
+      --cyan: #00F2FE;
+      --cyan-glow: rgba(0, 242, 254, 0.35);
+      --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --crimson: #EF4444;
+      --crimson-glow: rgba(239, 68, 68, 0.4);
+      --purple: #8B5CF6;
+      --purple-glow: rgba(139, 92, 246, 0.35);
+      --amber: #F59E0B;
+      --text-main: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-cyan: rgba(0, 242, 254, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(9, 11, 16, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #EF4444, #8B5CF6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 0 16px var(--crimson-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #FFFFFF, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .badge-live {
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald-glow);
+    }
+
+    .badge-live::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--emerald);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .btn-github {
+      background: #1F2937;
+      color: #FFF;
+      text-decoration: none;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s;
+    }
+    .btn-github:hover {
+      background: #374151;
+      border-color: var(--cyan);
+    }
+
+    /* VIEW SWITCHER TABS */
+    .view-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.25rem;
+      border-radius: 10px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .tab-btn.active {
+      background: var(--cyan);
+      color: #090B10;
+      box-shadow: 0 0 14px var(--cyan-glow);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      display: flex;
+      position: relative;
+      height: calc(100vh - 65px);
+    }
+
+    /* TAB 1: COMMAND CENTER */
+    #view-command {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .sidebar {
+      width: 440px;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 500;
+    }
+
+    .sidebar-section {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* METRIC STATS ROW */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.75rem;
+      transition: all 0.2s;
+    }
+    .metric-card:hover { border-color: var(--border-cyan); }
+
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 0.2rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* SIMULATION TRIGGER */
+    .sim-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .btn-sos-trigger {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 0.6rem;
+      box-shadow: 0 0 16px var(--crimson-glow);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-sos-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 24px rgba(239, 68, 68, 0.6);
+    }
+
+    /* ACTIVE INCIDENT DETAILS */
+    .incident-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    .incident-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-tag {
+      background: rgba(239, 68, 68, 0.2);
+      color: #F87171;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .stepper {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4B5563;
+    }
+    .step-dot.done { background: var(--emerald); box-shadow: 0 0 8px var(--emerald-glow); }
+    .step-dot.active { background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); animation: pulse 1s infinite; }
+
+    /* HOSPITALS LIST */
+    .hospital-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .hospital-item:hover { border-color: var(--cyan); background: rgba(30, 41, 59, 0.9); }
+
+    .hosp-name { font-size: 0.85rem; font-weight: 600; }
+    .hosp-info { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .bed-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* MAP CONTAINER */
+    #map-container {
+      flex: 1;
+      height: 100%;
+      background: #090B10;
+    }
+
+    /* TAB 2: CITIZEN SOS SIMULATOR */
+    #view-citizen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, rgba(16, 21, 30, 0.95), #090B10);
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .phone-mockup {
+      width: 390px;
+      max-width: 100%;
+      background: #121824;
+      border: 3px solid #374151;
+      border-radius: 36px;
+      padding: 1.5rem 1.25rem;
+      box-shadow: 0 0 50px rgba(0, 242, 254, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone-speaker {
+      width: 60px;
+      height: 5px;
+      background: #374151;
+      border-radius: 3px;
+      margin-bottom: 1.25rem;
+    }
+
+    .sos-big-btn {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #EF4444 0%, #B91C1C 100%);
+      border: 4px solid #FCA5A5;
+      color: white;
+      font-size: 2.2rem;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      box-shadow: 0 0 35px var(--crimson-glow);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .sos-big-btn span { font-size: 0.85rem; font-weight: 600; opacity: 0.9; }
+    .sos-big-btn:active { transform: scale(0.95); }
+
+    .cpr-metronome-box {
+      margin-top: 1.5rem;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .metronome-visual {
+      width: 65px;
+      height: 65px;
+      background: var(--card-bg);
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      margin: 0.5rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--cyan);
+      transition: transform 0.05s ease;
+    }
+
+    .metronome-visual.beat {
+      transform: scale(1.25);
+      background: var(--cyan);
+      color: #090B10;
+      box-shadow: 0 0 25px var(--cyan-glow);
+    }
+
+    /* CERTIFICATE MODAL */
+    .cert-box {
+      margin-top: 1rem;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px dashed var(--purple);
+      border-radius: 10px;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      width: 100%;
+    }
+
+    .cert-hash {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--purple);
+      font-size: 0.68rem;
+      word-break: break-all;
+      margin-top: 0.3rem;
+    }
+
+    /* FOOTER BAR */
+    footer {
+      background: rgba(9, 11, 16, 0.95);
+      border-top: 1px solid var(--border-subtle);
+      padding: 0.6rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a { color: var(--cyan); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>ResQ Network</h1>
+        <p>AI Emergency Medical Grid • Tech-ಶೋಧ 2026 (VVCE)</p>
+      </div>
+    </div>
+
+    <div class="view-tabs">
+      <button class="tab-btn active" id="tab-cmd" onclick="switchView('command')">🛰️ Command Center</button>
+      <button class="tab-btn" id="tab-cit" onclick="switchView('citizen')">📱 Citizen SOS Simulator</button>
+    </div>
+
+    <div class="header-badges">
+      <div class="badge badge-live">SYSTEM ACTIVE (MYSURU)</div>
+      <a href="https://github.com/gaganks2006-ind/ResQ-Network" target="_blank" class="btn-github">
+        <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        GitHub Repo
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN AREA -->
+  <main>
+    <!-- VIEW 1: COMMAND CENTER -->
+    <div id="view-command">
+      <div class="sidebar">
+        <!-- Real-Time Stats -->
+        <div class="sidebar-section">
+          <div class="section-title">📊 Mysuru Grid Telemetry</div>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Avg Bystander Time</div>
+              <div class="metric-value" style="color: var(--cyan);">2.4 min</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Active First Responders</div>
+              <div class="metric-value" style="color: var(--emerald);">48 Online</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">ICU Trauma Beds</div>
+              <div class="metric-value" style="color: var(--purple);">14 Free</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Legal Immunity Tokens</div>
+              <div class="metric-value" style="color: var(--amber);">100% Valid</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Trigger -->
+        <div class="sidebar-section">
+          <div class="section-title">⚡ Interactive Demo Trigger</div>
+          <div class="sim-banner">
+            <p style="font-size: 0.82rem; color: #E2E8F0;">Simulate an accident emergency at <strong>VVCE Gokulam, Mysuru</strong>:</p>
+            <button class="btn-sos-trigger" onclick="triggerIncidentSimulation()">🚨 Trigger Emergency SOS</button>
+          </div>
+
+          <!-- Dynamic Incident Info -->
+          <div class="incident-card" id="incidentCard">
+            <div class="incident-header">
+              <div class="incident-tag" id="incSeverity">CRITICAL LEVEL 1 (RED)</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);" id="incTimer">00:14 sec ago</span>
+            </div>
+            <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem;">Location: VVCE Gate 1, Gokulam</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.6rem;">Victim: Male, ~22 yrs • Severe Head Trauma / Unresponsive</p>
+
+            <div class="stepper">
+              <div class="step-item"><div class="step-dot done"></div> 1-Tap SOS Dispatched (0.0s)</div>
+              <div class="step-item"><div class="step-dot done"></div> Bystander Dr. Aditi Alerted (320m away)</div>
+              <div class="step-item"><div class="step-dot active" id="vaultStep"></div> Medical Vault: Unlocking O-Negative Blood & Allergy Alert</div>
+              <div class="step-item"><div class="step-dot" id="hospStep"></div> Pre-Alerting Apollo BGS Trauma Center</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hospital Live Grid -->
+        <div class="sidebar-section">
+          <div class="section-title">🏥 Designated Trauma Centers</div>
+          <div class="hospital-item" onclick="panToHospital(12.3385, 76.6235, 'Apollo BGS')">
+            <div>
+              <div class="hosp-name">Apollo BGS Hospital</div>
+              <div class="hosp-info">Adichunchanagiri Rd, Kuvempunagar • 4.2 km</div>
+            </div>
+            <div class="bed-pill">4 ICU Free</div>
+          </div>
+
+          <div class="hospital-item" onclick="panToHospital(12.3601, 76.6432, 'Columbia Asia')">
+            <div>
+              <div class="hosp-name">Manipal Hospital (Columbia Asia)</div>
+              <div class="hosp-info">Bangalore-Mysore Ring Rd • 5.1 km</div>
+            </div>
+            <div class="bed-pill">3 ICU Free</div>
+          </div>
+
+          <div class="hospital-item" onclick="panToHospital(12.3023, 76.6542, 'JSS Hospital')">
+            <div>
+              <div class="hosp-name">JSS Hospital & Trauma Center</div>
+              <div class="hosp-info">Ramanuja Rd, Mysuru • 6.0 km</div>
+            </div>
+            <div class="bed-pill">5 ICU Free</div>
+          </div>
+
+          <div class="hospital-item" onclick="panToHospital(12.3168, 76.6502, 'K.R. Hospital')">
+            <div>
+              <div class="hosp-name">K.R. Hospital (Govt Apex)</div>
+              <div class="hosp-info">Irwin Rd, Near Railway Station • 3.8 km</div>
+            </div>
+            <div class="bed-pill">2 ICU Free</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAP -->
+      <div id="map-container"></div>
+    </div>
+
+    <!-- VIEW 2: CITIZEN SOS SIMULATOR -->
+    <div id="view-citizen">
+      <div class="phone-mockup">
+        <div class="phone-speaker"></div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">CITIZEN RESCUE INTERFACE</div>
+
+        <button class="sos-big-btn" onclick="citizenSosClick()">
+          🚨
+          <span>PRESS FOR SOS</span>
+        </button>
+
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; text-align: center;">
+          Kannada & English Voice Triage Active<br>
+          <strong style="color: var(--cyan);">Emergency Geofence: Active</strong>
+        </div>
+
+        <div class="cpr-metronome-box">
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">AHA CPR COACH (110 BPM)</div>
+          <div class="metronome-visual" id="cprOrb">110</div>
+          <p style="font-size: 0.72rem; color: var(--text-muted);">Push hard & fast at center of chest (5 cm depth)</p>
+          <button style="margin-top: 0.6rem; background: rgba(0, 242, 254, 0.15); border: 1px solid var(--cyan); color: var(--cyan); padding: 0.35rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;" onclick="toggleMetronome()">
+            <span id="metroBtnText">Start CPR Metronome Beat</span>
+          </button>
+        </div>
+
+        <div class="cert-box">
+          <strong>🛡️ Good Samaritan Legal Shield</strong>
+          <div>Protected under MV Act § 134A & IT Act § 85B</div>
+          <div class="cert-hash" id="certToken">Hyperledger Token: 0x9f7a...3d81b4e (MINTED)</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>ResQ Network • AI-Orchestrated Emergency Response Grid • VVCE Mysuru</div>
+    <div>
+      <a href="https://github.com/gaganks2006-ind/ResQ-Network" target="_blank">Source Code & Technical Docs on GitHub</a>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching
+    function switchView(view) {
+      const cmdView = document.getElementById('view-command');
+      const citView = document.getElementById('view-citizen');
+      const tabCmd = document.getElementById('tab-cmd');
+      const tabCit = document.getElementById('tab-cit');
+
+      if (view === 'command') {
+        cmdView.style.display = 'flex';
+        citView.style.display = 'none';
+        tabCmd.classList.add('active');
+        tabCit.classList.remove('active');
+        setTimeout(() => { if (map) map.invalidateSize(); }, 200);
+      } else {
+        cmdView.style.display = 'none';
+        citView.style.display = 'flex';
+        tabCit.classList.add('active');
+        tabCmd.classList.remove('active');
+      }
+    }
+
+    // Leaflet Map Init (Mysuru)
+    let map;
+    const mysuruCoords = [12.3350, 76.6350];
+    const hospitals = [
+      { name: "Apollo BGS Hospital", coords: [12.3385, 76.6235], icu: 4 },
+      { name: "Manipal Hospital", coords: [12.3601, 76.6432], icu: 3 },
+      { name: "JSS Hospital", coords: [12.3023, 76.6542], icu: 5 },
+      { name: "K.R. Hospital", coords: [12.3168, 76.6502], icu: 2 }
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      map = L.map('map-container').setView(mysuruCoords, 13);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB &copy; OpenStreetMap',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Add Hospital Markers
+      hospitals.forEach(h => {
+        const marker = L.circleMarker(h.coords, {
+          radius: 8,
+          fillColor: '#10B981',
+          color: '#FFFFFF',
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+        marker.bindPopup(`<b>${h.name}</b><br>Available ICU Trauma Beds: <b>${h.icu}</b>`);
+      });
+
+      // Add Responder Markers
+      const responders = [
+        [12.3412, 76.6290, "Responder: Aditi (BLS Certified)"],
+        [12.3320, 76.6390, "Responder: Rahul (CPR Trained)"],
+        [12.3480, 76.6210, "Responder: Dr. Vikram (Trauma Surgeon)"]
+      ];
+      responders.forEach(r => {
+        const marker = L.circleMarker([r[0], r[1]], {
+          radius: 6,
+          fillColor: '#00F2FE',
+          color: '#FFFFFF',
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+        marker.bindPopup(`<b>${r[2]}</b><br>Status: Ready (En Route Radius < 500m)`);
+      });
+    });
+
+    function panToHospital(lat, lng, name) {
+      if (map) {
+        map.flyTo([lat, lng], 15, { duration: 1.2 });
+      }
+    }
+
+    // Incident Simulation
+    let incidentMarker = null;
+    let incidentRoute = null;
+    function triggerIncidentSimulation() {
+      const card = document.getElementById('incidentCard');
+      card.style.display = 'block';
+
+      const vvceCoords = [12.3375, 76.6270];
+
+      if (incidentMarker) map.removeLayer(incidentMarker);
+      if (incidentRoute) map.removeLayer(incidentRoute);
+
+      incidentMarker = L.circleMarker(vvceCoords, {
+        radius: 12,
+        fillColor: '#EF4444',
+        color: '#FFFFFF',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 1
+      }).addTo(map);
+
+      incidentMarker.bindPopup("<b>🚨 ACTIVE LEVEL 1 TRAUMA SOS</b><br>Location: VVCE Gokulam<br>Bystander Aditi Dispatched!").openPopup();
+
+      map.flyTo(vvceCoords, 14, { duration: 1.5 });
+
+      // Route line to Apollo Hospital
+      const apolloCoords = [12.3385, 76.6235];
+      incidentRoute = L.polyline([vvceCoords, apolloCoords], {
+        color: '#00F2FE',
+        weight: 4,
+        dashArray: '8, 8',
+        opacity: 0.9
+      }).addTo(map);
+
+      setTimeout(() => {
+        document.getElementById('vaultStep').className = 'step-dot done';
+        document.getElementById('hospStep').className = 'step-dot active';
+      }, 1500);
+
+      setTimeout(() => {
+        document.getElementById('hospStep').className = 'step-dot done';
+      }, 3000);
+    }
+
+    function citizenSosClick() {
+      alert("🚨 SOS Dispatched!\n\nLocation Geocoded: VVCE Gokulam, Mysuru.\nBystanders within 500m notified.\nAudio-Haptic CPR Metronome ready at 110 BPM.");
+      switchView('command');
+      triggerIncidentSimulation();
+    }
+
+    // Audio-Haptic Metronome (110 BPM)
+    let metroInterval = null;
+    let audioCtx = null;
+
+    function playBeep() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 880; // A5 pitch
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.09);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    function toggleMetronome() {
+      const orb = document.getElementById('cprOrb');
+      const btn = document.getElementById('metroBtnText');
+
+      if (metroInterval) {
+        clearInterval(metroInterval);
+        metroInterval = null;
+        btn.innerText = "Start CPR Metronome Beat";
+      } else {
+        btn.innerText = "Stop CPR Metronome Beat";
+        const intervalMs = (60 / 110) * 1000; // ~545ms for 110 BPM
+        metroInterval = setInterval(() => {
+          orb.classList.add('beat');
+          playBeep();
+          setTimeout(() => orb.classList.remove('beat'), 120);
+        }, intervalMs);
+      }
+    }
+  </script>
+</body>
+</html>
