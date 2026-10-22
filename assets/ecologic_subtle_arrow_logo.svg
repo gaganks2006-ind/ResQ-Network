@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+    <style>
+      .brand-title {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 96px;
+        font-weight: 800;
+        fill: #0F172A;
+        letter-spacing: -1.5px;
+      }
+      .brand-sub {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        fill: #044E35;
+        letter-spacing: 8px;
+      }
+    </style>
+  </defs>
+
+  <!-- Pure White Background -->
+  <rect width="1000" height="1000" fill="#FFFFFF"/>
+
+  <!-- Artistic Circular Ring with Invisible / Subtle Negative Space Right-Pointing Arrow -->
+  <!-- Outer Radius: 420, Inner Radius: 285. Completely smooth outer boundary. -->
+  <g fill="#044E35">
+    <!-- The ring sweeps clockwise, with a precision negative-space chevron cut at the top pointing right -->
+    <!-- Segment 1: Main circular ring with subtle arrow terminal -->
+    <path d="M 540,81 
+             A 420 420 0 1 1 475,82
+             L 475,217
+             A 285 285 0 1 0 515,216
+             L 555,148
+             Z" />
+             
+    <!-- Subtly angled rightward leading edge that stays flush inside the circle -->
+    <path d="M 515,216 
+             L 575,148 
+             L 515,81 
+             A 420 420 0 0 1 540,81 
+             Z" />
+  </g>
+
+  <!-- Clean Inner Cutout -->
+  <circle cx="500" cy="500" r="284" fill="#FFFFFF" />
+
+  <!-- Center Typography -->
+  <text x="500" y="495" text-anchor="middle" class="brand-title">
+    Eco<tspan fill="#044E35">Logic</tspan>
+  </text>
+  <text x="508" y="565" text-anchor="middle" class="brand-sub">
+    HEALTHCARE
+  </text>
+</svg>
